@@ -1,3 +1,4 @@
+
 ######################################################################
 # Copyright 2016, 2023 John J. Rofrano. All Rights Reserved.
 #
@@ -47,6 +48,12 @@ def step_impl(context):
     # load the database with new products
     #
     for row in context.table:
-        #
-        # ADD YOUR CODE HERE TO CREATE PRODUCTS VIA THE REST API
-        #
+        product_data = {
+            "name": row["name"],
+            "description": row["description"],
+            "price": float(row["price"]),
+            "available": row["available"].lower() == "true",
+            "category": row["category"]
+        }
+        context.resp = requests.post(f"{context.base_url}/products", json=product_data)
+        assert context.resp.status_code == HTTP_201_CREATED

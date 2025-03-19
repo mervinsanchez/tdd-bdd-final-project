@@ -101,6 +101,63 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(new_product.available, product.available)
         self.assertEqual(new_product.category, product.category)
 
-    #
-    # ADD YOUR TEST CASES HERE
-    #
+    def test_read_a_product(self):
+        """It should Read a Product by ID"""
+        product = ProductFactory()
+        product.create()
+        found_product = Product.find(product.id)
+        self.assertIsNotNone(found_product)
+        self.assertEqual(found_product.id, product.id)
+        self.assertEqual(found_product.name, product.name)
+
+    def test_update_a_product(self):
+        """It should Update a Product"""
+        product = ProductFactory()
+        product.create()
+        self.assertIsNotNone(product.id)
+        # Update the product
+        product.name = "Updated Name"
+        product.update()
+        updated_product = Product.find(product.id)
+        self.assertEqual(updated_product.name, "Updated Name")
+
+    def test_delete_a_product(self):
+        """It should Delete a Product"""
+        product = ProductFactory()
+        product.create()
+        self.assertIsNotNone(product.id)
+        # Delete the product
+        product.delete()
+        self.assertIsNone(Product.find(product.id))
+
+    def test_list_all_products(self):
+        """It should List all Products"""
+        products = Product.all()
+        self.assertEqual(products, [])
+        product1 = ProductFactory()
+        product1.create()
+        product2 = ProductFactory()
+        product2.create()
+        products = Product.all()
+        self.assertEqual(len(products), 2)
+
+    def test_filter_products_by_category(self):
+        """It should Filter Products by Category"""
+        product1 = Product(name="Shirt", category=Category.CLOTHS)
+        product2 = Product(name="Laptop", category=Category.ELECTRONICS)
+        product1.create()
+        product2.create()
+        cloths = Product.find_by_category(Category.CLOTHS)
+        self.assertEqual(len(cloths), 1)
+        self.assertEqual(cloths[0].name, "Shirt")
+
+    def test_filter_products_by_price(self):
+        """It should Filter Products by Price"""
+        product1 = Product(name="Cheap Shirt", price=10.00)
+        product2 = Product(name="Expensive Laptop", price=1500.00)
+        product1.create()
+        product2.create()
+        cheap_products = Product.find_by_price_range(0, 100)
+        self.assertEqual(len(cheap_products), 1)
+        self.assertEqual(cheap_products[0].name, "Cheap Shirt")
+

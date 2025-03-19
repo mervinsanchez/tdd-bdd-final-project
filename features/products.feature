@@ -38,3 +38,27 @@ Scenario: Create a Product
     And I should see "True" in the "Available" dropdown
     And I should see "Tools" in the "Category" dropdown
     And I should see "34.95" in the "Price" field
+
+Scenario: Retrieve a Product by ID
+    Given there is a product with name "Laptop" and category "Electronics" with price 1000
+    When I request the product by ID
+    Then the response status should be 200
+    And the product name should be "Laptop"
+
+Scenario: List Products with Filters
+    Given there are multiple products in the catalog
+    When I request the product list filtered by category "Electronics"
+    Then the response status should be 200
+    And I should receive 2 products
+
+Scenario: Update an Existing Product
+    Given there is a product with name "Phone" and category "Electronics" with price 800
+    When I update the product with name "Smartphone" and price 900
+    Then the response status should be 200
+    And the product should have name "Smartphone" and price 900
+
+Scenario: Delete a Product
+    Given there is a product with name "Smartwatch" and category "Electronics" with price 200
+    When I delete the product
+    Then the response status should be 204
+    And the product should not exist in the catalog
